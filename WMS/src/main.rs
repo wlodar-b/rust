@@ -21,7 +21,7 @@ fn main() {
         let mut wejscie_menu = String::new();
         io::stdin().read_line(&mut wejscie_menu).expect("Błąd odczytu");
         // Parsowanie na liczbe
-        let wybor: i32 = wejscie_menu.trim.parse.expect("To nie jest liczba!");
+        let wybor: i32 = wejscie_menu.trim().parse().expect("To nie jest liczba!");
 
         match wybor {
             1 => {
@@ -75,7 +75,7 @@ fn main() {
                     break;
                 }
                 _ => {
-                    println!("Nieprawidłowy wybór wpisz 1, 2 lub 0.";)
+                    println!("Nieprawidłowy wybór wpisz 1, 2 lub 0.");
                 }
                 
             }
