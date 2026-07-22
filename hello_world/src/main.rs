@@ -68,11 +68,11 @@ fn main() {
 
 fn oblicz_kalorie(waga: f64, wzrost: f64, wiek: f64, modyfikator: f64, aktywnosc: f64) -> f64{((10.0 * waga) + (6.25 * wzrost) - (5.0 * wiek) + modyfikator) * aktywnosc}
 
-fn bialko_gramy(waga: f64) -> f64 {waga * 2.0}
-fn bialko_kcal(gramy_bialka: f64) -> f64 {gramy_bialka * 4.0}
+fn bialko_gramy(waga: f64) -> f64{waga * 2.0}
+fn bialko_kcal(gramy_bialka: f64) -> f64{gramy_bialka * 4.0}
 
 fn tluszcze_gramy(waga: f64) -> f64{waga * 1.0}
-fn tluszcze_kcal(gramy_tluszcze: f64) -> f64 {gramy_tluszcze * 9.0}
+fn tluszcze_kcal(gramy_tluszcze: f64) -> f64{gramy_tluszcze * 9.0}
 
-fn pula_na_wegle(kalorie: f64, kcal_b: f64, kcal_t: f64) -> f64{kalorie - (kcal_b + kcal_t)}
+fn pula_na_wegle(kalorie: f64, kcal_b: f64, kcal_t: f64 ) -> f64{kalorie - (kcal_b + kcal_t)}
 fn wegle_gramy(kalorie_na_wegle: f64) -> f64{kalorie_na_wegle / 4.0}
