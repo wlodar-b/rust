@@ -1,5 +1,8 @@
 use std::io::{self, Write};
+use serde::{Serialize, Deserialize};
+use std::fs;
 
+#[derive(Serialize, Deserialize)]
 struct Towar {
     nazwa: String,
     marka: String,
@@ -9,8 +12,21 @@ struct Towar {
 }
 
 fn main() {
-    let mut magazyn: Vec<Towar> = Vec::new();
-    let mut aktualne_id = 1;
+    let nazwa_pliku = "baza_towaru.json";
+
+    // Odczyt, próbujemy wczytać plik jeśli go nie ma to tworzymy pusty wektor
+    let mut magazyn: Vec<Towar> = match fs::read_to_string(nazwa_pliku) {
+        Ok(zawartosc_pliku) => {
+            // Udało sie odczytać plik! Deserialuzjemy tekst JSON z powrotem
+            serde_json::from_str(&zawartosc_pliku).expect("Błąd: Plik json jest uszkodzony")
+        }
+        Err(_) => {
+            // Plik nie istnieje, zaczynamy z czysta karta
+            Vec::new()
+        }
+    };
+
+    let mut aktualne_id = magazyn.len() as i32 +1;
 
     loop {
 
@@ -175,4 +191,13 @@ fn main() {
                 
             }
         } 
+    
+    // Zapis do pliku
+    // Zamieniamy cały wektor na ładny tekst formatu JSON
+    let json_tekst = serde_json::to_string_pretty(&magazyn).expect("Błąd przy serializacji");
+    // Fizycznie zapisujemy wygenerowany tekst do pliku na dysku.
+    fs::write(nazwa_pliku, json_tekst).expect("Błąd przy zapisywaniu pliu na dysku.");
+
+    println!("Zapisano bazę towarów na dysku");
+
 }
