@@ -2,12 +2,19 @@ use std::io::{self, Write};
 use serde::{Serialize, Deserialize};
 use std::fs;
 
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+enum StanTowaru {
+    A,
+    B,
+    C,
+    D,
+}
 #[derive(Serialize, Deserialize)]
 struct Towar {
     nazwa: String,
     marka: String,
     rozmiar: i32,
-    stan: String,
+    stan: StanTowaru,
     id: i32,
 }
 
@@ -69,9 +76,23 @@ fn main() {
 
                     print!("Podaj stan przedmiotu (A, B, C, D): ");
                     io::stdout().flush().expect("Błąd przy wyświetlaniu tekstu");
+
+                    // Najpierw tworzymy zmienną i pobieramy tekst!
                     let mut wejsciowy_stan = String::new();
                     io::stdin().read_line(&mut wejsciowy_stan).expect("Błąd odczytu");
-                    let stan_gotowy = wejsciowy_stan.trim().to_string();
+
+                    // A dopiero potem czyścimy i robimy z tego Enum
+                    let wpisany_tekst = wejsciowy_stan.trim().to_uppercase();
+                    let stan_gotowy = match wpisany_tekst.as_str() {
+                        "A" => StanTowaru::A,
+                        "B" => StanTowaru::B,
+                        "C" => StanTowaru::C,
+                        "D" => StanTowaru::D,
+                        _ => {
+                            println!("Błędny stan! Domyślnie ustawiam stan na C.");
+                            StanTowaru::C
+                            }                        
+                    };
 
                     let nowy_towar = Towar {
                         nazwa: nazwa_gotowa,
@@ -115,7 +136,7 @@ fn main() {
                                 for przedmiot in &magazyn {
                                     // Porównujemy tekst z wektora z tekstem wpisanym przez Ciebie
                                     if przedmiot.marka == szukana_marka {
-                                        println!("ID: [{}] | {} | Rozmiar: {} | Stan: {}", przedmiot.id, przedmiot.marka, przedmiot.rozmiar, przedmiot.stan);
+                                        println!("ID: [{}] | {} | Rozmiar: {} | Stan: {:?}", przedmiot.id, przedmiot.marka, przedmiot.rozmiar, przedmiot.stan);
 
                                         znaleziono = true;
                                     }
@@ -139,7 +160,7 @@ fn main() {
 
                                 for przedmiot in &magazyn {
                                     if przedmiot.rozmiar == szukany_rozmiar {
-                                        println!("ID: [{}] | {} | Rozmiar: {} | Stan: {}", przedmiot.id, przedmiot.marka, przedmiot.rozmiar, przedmiot.stan);
+                                        println!("ID: [{}] | {} | Rozmiar: {} | Stan: {:?}", przedmiot.id, przedmiot.marka, przedmiot.rozmiar, przedmiot.stan);
 
                                         znaleziono = true;
                                     }
@@ -148,13 +169,26 @@ fn main() {
                                     println!("Nie znaleziono w magazynie towaru w tym rozmiarze");
                                 }
                             }
-                            3 => {
+                                 3 => {
                                 print!("Podaj stan który szukasz: ");
                                 io::stdout().flush().expect("Błąd");
                                 let mut wpisany_stan = String::new();
                                 io::stdin().read_line(&mut wpisany_stan).expect("Błąd");
-                                let szukany_stan = wpisany_stan.trim().to_string();
-                                
+
+                                // Tłumaczymy to na dużą literę
+                                let szukany_tekst = wpisany_stan.trim().to_uppercase();
+
+                                // Tworzymy Enum do wyszukiwania
+                                let szukany_stan_enum = match szukany_tekst.as_str() {
+                                    "A" => StanTowaru::A,
+                                    "B" => StanTowaru::B,
+                                    "C" => StanTowaru::C,
+                                    "D" => StanTowaru::D,
+                                    _ => {
+                                        println!("Nie ma takiego stanu! Szukam domyślnie A.");
+                                        StanTowaru::A
+                                        }
+                                    };
                                 // Flaga Pomocnicza
                                 let mut znaleziono = false;
                                 println!("--- WYNIKI WYSZUKIWANIA ---");
@@ -162,8 +196,8 @@ fn main() {
                                 // Pętla przechodzaca przez magazyn
                                 for przedmiot in &magazyn {
                                     // Porównujemy tekst z wektora z tekstem wpisanym przez Ciebie
-                                    if przedmiot.stan == szukany_stan {
-                                        println!("ID: [{}] | {} | Rozmiar: {} | Stan: {}", przedmiot.id, przedmiot.marka, przedmiot.rozmiar, przedmiot.stan);
+                                    if przedmiot.stan == szukany_stan_enum {
+                                        println!("ID: [{}] | {} | Rozmiar: {} | Stan: {:?}", przedmiot.id, przedmiot.marka, przedmiot.rozmiar, przedmiot.stan);
 
                                         znaleziono = true;
                                     }
@@ -192,7 +226,7 @@ fn main() {
                     } else {
                         println!("--- Lista Towarów ---");
                         for przedmiot in &magazyn {
-                            println!("ID [{}] | {} (Rozmiar: {}, Stan: {})", przedmiot.id, przedmiot.nazwa, przedmiot.rozmiar, przedmiot.stan);
+                            println!("ID [{}] | {} (Rozmiar: {}, Stan: {:?})", przedmiot.id, przedmiot.nazwa, przedmiot.rozmiar, przedmiot.stan);
                         }
                         print!("Podaj ID które chcesz usunąć: ");
                                 io::stdout().flush().expect("Błąd");
