@@ -1,22 +1,9 @@
+mod towar; 
+
 use std::io::{self, Write};
-use serde::{Serialize, Deserialize};
 use std::fs;
 
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
-enum StanTowaru {
-    A,
-    B,
-    C,
-    D,
-}
-#[derive(Serialize, Deserialize)]
-struct Towar {
-    nazwa: String,
-    marka: String,
-    rozmiar: i32,
-    stan: StanTowaru,
-    id: i32,
-}
+use towar::{Towar, StanTowaru};
 
 fn main() {
     let nazwa_pliku = "baza_towaru.json";
