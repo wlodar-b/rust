@@ -26,7 +26,12 @@ fn main() {
         }
     };
 
-    let mut aktualne_id = magazyn.len() as i32 +1;
+    let mut aktualne_id = 1;
+    for przedmiot in &magazyn {
+        if przedmiot.id >= aktualne_id {
+            aktualne_id = przedmiot.id + 1;
+        }
+    }
 
     loop {
 
@@ -206,7 +211,7 @@ fn main() {
                                         println!("Sukces: Towar od ID {} został usunięty.", gotowe_id);                                        
                                     } 
                                     None => {
-                                        println!("Błąd: Nie mamy w mahazynie towaru o ID {}.", gotowe_id);
+                                        println!("Błąd: Nie mamy w magazynie towaru o ID {}.", gotowe_id);
                                     }
                                     
                                 }
