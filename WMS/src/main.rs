@@ -30,7 +30,7 @@ fn main() {
 
     loop {
 
-        println!("=========================================\nMAGAZYN ZWROTÓW KONSUMENCKICH\n=========================================\nWybierz operację:\n[1] - Dodaj nowy towar do magazynu\n[2] - Wyszukaj i wyświetl produkt\n[0] - Wyjście \n=========================================");
+        println!("=========================================\nMAGAZYN ZWROTÓW KONSUMENCKICH\n=========================================\nWybierz operację:\n[1] - Dodaj nowy towar do magazynu\n[2] - Wyszukaj i wyświetl produkt\n[3] - Usuń towar z magazynu\n[0] - Wyjście \n=========================================");
         print!("Twój wybór: ");
         io::stdout().flush().expect("Błąd");
 
@@ -180,6 +180,38 @@ fn main() {
                     }
 
 
+                }
+                3 => {
+                    if magazyn.is_empty() {
+                        println!("Magazyn jest obecnie pusty");
+                    } else {
+                        println!("--- Lista Towarów ---");
+                        for przedmiot in &magazyn {
+                            println!("ID [{}] | {} (Rozmiar: {}, Stan: {})", przedmiot.id, przedmiot.nazwa, przedmiot.rozmiar, przedmiot.stan);
+                        }
+                        print!("Podaj ID które chcesz usunąć: ");
+                                io::stdout().flush().expect("Błąd");
+                                let mut wpisane_id = String::new();
+                                io::stdin().read_line(&mut wpisane_id).expect("Błąd");
+                                // Zamieniamy na i32
+                                let gotowe_id: i32 = wpisane_id.trim().parse().expect("To nie jest liczba!");
+
+                                // Szukamy pozycji przedmiotu o podanym id
+                                let pozycja = magazyn.iter().position(|p| p.id == gotowe_id);
+
+                                // Sprawdzamy wynik i usuwamy
+                                match pozycja {
+                                    Some(indeks ) => {
+                                        magazyn.remove(indeks);
+                                        println!("Sukces: Towar od ID {} został usunięty.", gotowe_id);                                        
+                                    } 
+                                    None => {
+                                        println!("Błąd: Nie mamy w mahazynie towaru o ID {}.", gotowe_id);
+                                    }
+                                    
+                                }
+
+                    }
                 }
                 0 => {
                     println!("Zamykanie programu. Do zobaczenia!");
