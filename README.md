@@ -12,6 +12,7 @@ Prosty, ale wydajny system WMS (Warehouse Management System) uruchamiany w konso
 *   **Wydawanie towaru:** Usuwanie sprzedanych przedmiotów ze stanu magazynowego na podstawie ich unikalnego numeru ID.
 *   **Zapis i Odczyt (JSON):** Aplikacja automatycznie wczytuje i zapisuje cały stan magazynowy do pliku `baza_towaru.json`, chroniąc dane przed utratą po zamknięciu programu.
 *   **Inteligentne ID:** System analizuje najwyższe użyte ID przy starcie programu, zapobiegając duplikatom po usunięciu części asortymentu.
+*   **Modularna Architektura:** Rozdzielenie logiki biznesowej od głównej pętli interfejsu, co zapewnia wysoką czytelność i łatwość w dodawaniu nowych modułów.
 
 ---
 
@@ -19,13 +20,13 @@ Prosty, ale wydajny system WMS (Warehouse Management System) uruchamiany w konso
 
 Aplikacja wykorzystuje bibliotekę `serde` do serializacji i deserializacji danych. Kod został podzielony na moduły w celu zachowania czystości i skalowalności:
 
-*   `main.rs` – Główna pętla programu, interfejs użytkownika (CLI) oraz logika operacji na wektorze.
+*   `main.rs` – Główna pętla programu, obsługa interfejsu użytkownika (CLI) oraz wczytywanie/zapisywanie bazy danych.
 *   `towar.rs` – Definicja struktury `Towar` oraz typu wyliczeniowego `StanTowaru`.
+*   `operacje.rs` – Centralna logika biznesowa: dedykowane funkcje do dodawania, wyszukiwania i usuwania asortymentu z wektora.
 
 ---
 
 ## 📅 Plany na przyszły rozwój (To Do)
 
-1.  **Refaktoryzacja Architektury:** Wydzielenie logiki biznesowej (dodawanie, wyszukiwanie, usuwanie) z pliku `main.rs` do osobnych, dedykowanych funkcji.
-2.  **Kuloodporna obsługa błędów:** Wyeliminowanie użycia `expect()` przy parsowaniu danych liczbowych na rzecz bezpiecznej obsługi błędów za pomocą wyrażeń `match`, aby program nie zamykał się przy literówkach użytkownika.
-3.  **Moduł Finansowy (Marża):** Rozbudowa struktury o cenę zakupu oraz sprzedaży w celu automatycznego wyliczania zysku z usuniętych (sprzedanych) produktów.
+1.  **Kuloodporna obsługa błędów:** Wyeliminowanie użycia `expect()` przy parsowaniu danych liczbowych na rzecz bezpiecznej obsługi błędów za pomocą wyrażeń `match`, aby program nie zamykał się przy literówkach użytkownika.
+2.  **Moduł Finansowy (Marża):** Rozbudowa struktury o cenę zakupu oraz sprzedaży w celu automatycznego wyliczania zysku z usuniętych (sprzedanych) produktów.
