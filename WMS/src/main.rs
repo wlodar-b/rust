@@ -35,7 +35,17 @@ fn main() {
         let mut wejscie_menu = String::new();
         io::stdin().read_line(&mut wejscie_menu).expect("Błąd odczytu");
         // Parsowanie na liczbe
-        let wybor: i32 = wejscie_menu.trim().parse().expect("To nie jest liczba!");
+        let wybor: i32 = match wejscie_menu.trim().parse() {
+            Ok(liczba) => {
+                liczba
+            } 
+            Err(_) => {
+                // Użytkownik wpisał litery lub znaki specialne
+                println!("Błąd: To nie jest poprawna liczba! Spróbuj ponownie.");
+                // Ignorujemy resztę kodu w tym obrocie i zaczynamy pętlę od nowa
+                continue;
+            }
+        };
 
         match wybor {
             1 => {
