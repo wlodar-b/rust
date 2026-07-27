@@ -40,59 +40,7 @@ fn main() {
 
         match wybor {
             1 => {
-                    // Pobieramy dane
-                    print!("Podaj nazwe przedmiotu: ");
-                    // Wypchniecie tekstu na ekran
-                    io::stdout().flush().expect("Błąd przy wyświetlaniu tekstu");
-                    let mut wejsciowa_nazwa = String::new();
-                    io::stdin().read_line(&mut wejsciowa_nazwa).expect("Błąd odczytu");
-                    // Czyścimy z białych znaków (np. enter)
-                    let nazwa_gotowa = wejsciowa_nazwa.trim().to_string();
-
-                    print!("Podaj markę przedmiotu: ");
-                    io::stdout().flush().expect("Błąd przy wyświetlaniu tekstu");
-                    let mut wejsciowa_marka = String::new();
-                    io::stdin().read_line(&mut wejsciowa_marka).expect("Błąd odczytu");
-                    let marka_gotowa = wejsciowa_marka.trim().to_string();
-
-                    print!("Podaj rozmiar przedmiotu: ");
-                    io::stdout().flush().expect("Błąd przy wyświetlaniu tekstu");
-                    let mut wejsciowy_rozmiar = String::new();
-                    io::stdin().read_line(&mut wejsciowy_rozmiar).expect("Błąd odczytu");
-                    let rozmiar_gotowy = wejsciowy_rozmiar.trim().parse().expect("To nie jest poprawna liczba!");
-
-                    print!("Podaj stan przedmiotu (A, B, C, D): ");
-                    io::stdout().flush().expect("Błąd przy wyświetlaniu tekstu");
-
-                    // Najpierw tworzymy zmienną i pobieramy tekst!
-                    let mut wejsciowy_stan = String::new();
-                    io::stdin().read_line(&mut wejsciowy_stan).expect("Błąd odczytu");
-
-                    // A dopiero potem czyścimy i robimy z tego Enum
-                    let wpisany_tekst = wejsciowy_stan.trim().to_uppercase();
-                    let stan_gotowy = match wpisany_tekst.as_str() {
-                        "A" => StanTowaru::A,
-                        "B" => StanTowaru::B,
-                        "C" => StanTowaru::C,
-                        "D" => StanTowaru::D,
-                        _ => {
-                            println!("Błędny stan! Domyślnie ustawiam stan na C.");
-                            StanTowaru::C
-                            }                        
-                    };
-
-                    let nowy_towar = Towar {
-                        nazwa: nazwa_gotowa,
-                        marka: marka_gotowa,
-                        rozmiar: rozmiar_gotowy,
-                        stan: stan_gotowy,
-                        id: aktualne_id,
-                    };
-
-                    magazyn.push(nowy_towar);
-                    aktualne_id += 1;
-
-                    println!("Przedmiot został dodany! W magazynie jest teraz {} przedmiotów", magazyn.len());
+                    dodaj_towar(&mut magazyn, &mut aktualne_id);    
                 }
 
                 2 => {
@@ -257,5 +205,63 @@ fn main() {
     fs::write(nazwa_pliku, json_tekst).expect("Błąd przy zapisywaniu pliu na dysku.");
 
     println!("Zapisano bazę towarów na dysku");
+
+}
+
+fn dodaj_towar(magazyn: &mut Vec<Towar>, aktualne_id: &mut i32) {
+    
+    // Pobieramy dane
+                    print!("Podaj nazwe przedmiotu: ");
+                    // Wypchniecie tekstu na ekran
+                    io::stdout().flush().expect("Błąd przy wyświetlaniu tekstu");
+                    let mut wejsciowa_nazwa = String::new();
+                    io::stdin().read_line(&mut wejsciowa_nazwa).expect("Błąd odczytu");
+                    // Czyścimy z białych znaków (np. enter)
+                    let nazwa_gotowa = wejsciowa_nazwa.trim().to_string();
+
+                    print!("Podaj markę przedmiotu: ");
+                    io::stdout().flush().expect("Błąd przy wyświetlaniu tekstu");
+                    let mut wejsciowa_marka = String::new();
+                    io::stdin().read_line(&mut wejsciowa_marka).expect("Błąd odczytu");
+                    let marka_gotowa = wejsciowa_marka.trim().to_string();
+
+                    print!("Podaj rozmiar przedmiotu: ");
+                    io::stdout().flush().expect("Błąd przy wyświetlaniu tekstu");
+                    let mut wejsciowy_rozmiar = String::new();
+                    io::stdin().read_line(&mut wejsciowy_rozmiar).expect("Błąd odczytu");
+                    let rozmiar_gotowy = wejsciowy_rozmiar.trim().parse().expect("To nie jest poprawna liczba!");
+
+                    print!("Podaj stan przedmiotu (A, B, C, D): ");
+                    io::stdout().flush().expect("Błąd przy wyświetlaniu tekstu");
+
+                    // Najpierw tworzymy zmienną i pobieramy tekst!
+                    let mut wejsciowy_stan = String::new();
+                    io::stdin().read_line(&mut wejsciowy_stan).expect("Błąd odczytu");
+
+                    // A dopiero potem czyścimy i robimy z tego Enum
+                    let wpisany_tekst = wejsciowy_stan.trim().to_uppercase();
+                    let stan_gotowy = match wpisany_tekst.as_str() {
+                        "A" => StanTowaru::A,
+                        "B" => StanTowaru::B,
+                        "C" => StanTowaru::C,
+                        "D" => StanTowaru::D,
+                        _ => {
+                            println!("Błędny stan! Domyślnie ustawiam stan na C.");
+                            StanTowaru::C
+                            }                        
+                    };
+
+                    let nowy_towar = Towar {
+                        nazwa: nazwa_gotowa,
+                        marka: marka_gotowa,
+                        rozmiar: rozmiar_gotowy,
+                        stan: stan_gotowy,
+                        id: *aktualne_id,
+                    };
+
+                    magazyn.push(nowy_towar);
+                    *aktualne_id += 1;
+
+                    println!("Przedmiot został dodany! W magazynie jest teraz {} przedmiotów", magazyn.len());
 
 }
