@@ -3,16 +3,7 @@ use std::io::{self, Write};
 
 pub fn dodaj_towar(magazyn: &mut Vec<Towar>, aktualne_id: &mut i32) {
     // Pobieramy dane
-    print!("Podaj nazwe przedmiotu: ");
-    // Wypchniecie tekstu na ekran
-    io::stdout().flush().expect("Błąd przy wyświetlaniu tekstu");
-    let mut wejsciowa_nazwa = String::new();
-    io::stdin()
-        .read_line(&mut wejsciowa_nazwa)
-        .expect("Błąd odczytu");
-    // Czyścimy z białych znaków (np. enter)
-    let nazwa_gotowa = wejsciowa_nazwa.trim().to_string();
-
+    
     print!("Podaj markę przedmiotu: ");
     io::stdout().flush().expect("Błąd przy wyświetlaniu tekstu");
     let mut wejsciowa_marka = String::new();
@@ -20,6 +11,17 @@ pub fn dodaj_towar(magazyn: &mut Vec<Towar>, aktualne_id: &mut i32) {
         .read_line(&mut wejsciowa_marka)
         .expect("Błąd odczytu");
     let marka_gotowa = wejsciowa_marka.trim().to_string();
+
+    print!("Podaj kolor przedmiotu: ");
+    // Wypchniecie tekstu na ekran
+    io::stdout().flush().expect("Błąd przy wyświetlaniu tekstu");
+    let mut wejsciowy_kolor = String::new();
+    io::stdin()
+        .read_line(&mut wejsciowy_kolor)
+        .expect("Błąd odczytu");
+    // Czyścimy z białych znaków (np. enter)
+    let kolor_gotowa = wejsciowy_kolor.trim().to_string();
+
 
     print!("Podaj rozmiar przedmiotu: ");
     io::stdout().flush().expect("Błąd przy wyświetlaniu tekstu");
@@ -58,7 +60,7 @@ pub fn dodaj_towar(magazyn: &mut Vec<Towar>, aktualne_id: &mut i32) {
     };
 
     let nowy_towar = Towar {
-        nazwa: nazwa_gotowa,
+        nazwa: kolor_gotowa,
         marka: marka_gotowa,
         rozmiar: rozmiar_gotowy,
         stan: stan_gotowy,
@@ -217,8 +219,8 @@ pub fn usun_towar(magazyn: &mut Vec<Towar>) {
         println!("--- Lista Towarów ---");
         for przedmiot in magazyn.iter() {
             println!(
-                "ID [{}] | {} (Rozmiar: {}, Stan: {:?})",
-                przedmiot.id, przedmiot.nazwa, przedmiot.rozmiar, przedmiot.stan
+                "ID [{}] | {} (Rozmiar: {}, Stan: {:?}, Kolor: {})",
+                przedmiot.id, przedmiot.marka, przedmiot.rozmiar, przedmiot.stan, przedmiot.nazwa
             );
         }
         print!("Podaj ID które chcesz usunąć: ");
