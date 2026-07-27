@@ -1,32 +1,33 @@
 # WMS 
 
-Prosty, ale wydajny system WMS (Warehouse Management System) uruchamiany w konsoli, napisany w języku Rust. Aplikacja została stworzona z myślą o szybkiej inwentaryzacji i zarządzaniu asortymentem.
+Prosty, ale wydajny system WMS (Warehouse Management System) napisany w języku Rust. Aplikacja aktualnie ewoluuje z lokalnego narzędzia konsolowego (CLI) w stronę pełnoprawnej usługi sieciowej.
 
 ---
 
-## 🚀 Funkcjonalności
+## 🚀 Zrealizowane Funkcjonalności (Wersja 1.0 CLI)
 
 *   **Księgowanie towaru:** Szybkie dodawanie nowych przedmiotów do bazy z uwzględnieniem nazwy, marki oraz rozmiaru.
-*   **Bezpieczne stany (Enum):** Ścisła kontrola jakości towaru za pomocą zdefiniowanych stanów (`A`, `B`, `C`, `D`) opartych na typie wyliczeniowym, co eliminuje błędy przy wprowadzaniu danych.
-*   **Wyszukiwarka:** Wielopoziomowe menu pozwalające na filtrowanie aktualnego asortymentu po marce, rozmiarze lub stanie.
-*   **Wydawanie towaru:** Usuwanie sprzedanych przedmiotów ze stanu magazynowego na podstawie ich unikalnego numeru ID.
-*   **Zapis i Odczyt (JSON):** Aplikacja automatycznie wczytuje i zapisuje cały stan magazynowy do pliku `baza_towaru.json`, chroniąc dane przed utratą po zamknięciu programu.
-*   **Inteligentne ID:** System analizuje najwyższe użyte ID przy starcie programu, zapobiegając duplikatom po usunięciu części asortymentu.
-*   **Modularna Architektura:** Rozdzielenie logiki biznesowej od głównej pętli interfejsu, co zapewnia wysoką czytelność i łatwość w dodawaniu nowych modułów.
-*   **Kuloodporna obsługa wejścia:** Program jest w pełni zabezpieczony przed "paniką" i wyłączeniem w przypadku wprowadzenia przez użytkownika błędnego formatu danych (np. liter zamiast cyfr).
+*   **Bezpieczne stany (Enum):** Ścisła kontrola jakości towaru za pomocą zdefiniowanych stanów (`A`, `B`, `C`, `D`).
+*   **Moduł Finansowy:** Automatyczne wyliczanie i raportowanie marży (zysku) podczas wydawania (usuwania) towaru z magazynu na podstawie cen zakupu i sprzedaży.
+*   **Wyszukiwarka:** Wielopoziomowe menu pozwalające na filtrowanie aktualnego asortymentu.
+*   **Zapis i Odczyt (JSON):** Aplikacja automatycznie wczytuje i zapisuje cały stan magazynowy do pliku `baza_towaru.json`.
+*   **Inteligentne ID:** System analizuje najwyższe użyte ID przy starcie programu, zapobiegając duplikatom.
+*   **Kuloodporna obsługa wejścia:** Program jest w pełni zabezpieczony przed awaryjnym zamknięciem w przypadku podania błędnego formatu danych.
 
 ---
 
-## 🏗️ Architektura i Struktura Projektu
+## 🏗️ Aktualna Architektura
 
-Aplikacja wykorzystuje bibliotekę `serde` do serializacji i deserializacji danych. Kod został podzielony na moduły w celu zachowania czystości i skalowalności:
-
-*   `main.rs` – Główna pętla programu, obsługa interfejsu użytkownika (CLI) oraz wczytywanie/zapisywanie bazy danych.
-*   `towar.rs` – Definicja struktury `Towar` oraz typu wyliczeniowego `StanTowaru`.
-*   `operacje.rs` – Centralna logika biznesowa: dedykowane funkcje do dodawania, wyszukiwania i usuwania asortymentu z wektora.
+Kod został podzielony na moduły w celu zachowania czystości logiki biznesowej:
+*   `main.rs` – Główna pętla programu i tekstowy interfejs użytkownika.
+*   `towar.rs` – Definicja struktury `Towar` (wzbogacona o ceny) oraz typu wyliczeniowego `StanTowaru`.
+*   `operacje.rs` – Centralna logika operacji magazynowych (wyszukiwanie, parsowanie, wyliczanie zysków).
 
 ---
 
-## 📅 Plany na przyszły rozwój (To Do)
+## 📅 Plany na przyszły rozwój (Wersja 2.0 - Sieć i Bazy Danych)
 
-1.  **Moduł Finansowy (Marża):** Rozbudowa struktury o cenę zakupu oraz sprzedaży w celu automatycznego wyliczania zysku z usuniętych (sprzedanych) produktów.
+1.  **Migracja na REST API (Axum):** Przebudowa architektury na asynchroniczny serwer webowy nasłuchujący żądań HTTP w tle. Zastąpienie pętli konsolowej endpointami.
+2.  **Graficzny Interfejs Użytkownika (GUI):** Stworzenie frontendowej aplikacji webowej, która połączy się z naszym serwerem, umożliwiając zarządzanie magazynem z poziomu przeglądarki internetowej.
+3.  **Relacyjna Baza Danych (SQL):** Zastąpienie lokalnego pliku JSON profesjonalną bazą danych (np. SQLite) w celu zapewnienia wyższej wydajności, bezpieczeństwa i możliwości wykonywania zaawansowanych zapytań analitycznych.
+4.  **Wdrożenie Sieciowe (Homelab):** Konteneryzacja gotowego systemu i uruchomienie go w sieci lokalnej jako usługi działającej w trybie 24/7.
