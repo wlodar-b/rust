@@ -58,12 +58,41 @@ pub fn dodaj_towar(magazyn: &mut Vec<Towar>, aktualne_id: &mut i32) {
             StanTowaru::C
         }
     };
+    
+    // Pobieranie ceny zakupu
+    print!("Podaj cenę zakupu (np. 15.50): ");
+    io::stdout().flush().expect("Błąd przy wyświetlaniu tekstu");
+    let mut wejsciowa_cena_z = String::new();
+    io::stdin().read_line(&mut wejsciowa_cena_z).expect("Błąd odczytu");
+    let cena_zakupu_gotowa: f32 = match wejsciowa_cena_z.trim().parse() {
+        Ok(liczba) => liczba,
+        Err(_) => {
+            println!("Błąd: Podana cena nie jest poprawną liczbą! Przerywam dodawanie.");
+            return;
+        }
+    };
+
+    // Pobieranie ceny sprzedaży
+    print!("Podaj przewidwyana cene sprzedaży (np. 49.99): ");
+    io::stdout().flush().expect("Błąd przy wyświetlaniu tekstu");
+    let mut wejsciowa_cena_s = String::new();
+    io::stdin().read_line(&mut wejsciowa_cena_s).expect("Błąd odczytu");
+    let cena_sprzedazy_gotowa: f32 = match wejsciowa_cena_s.trim().parse() {
+        Ok(liczba) => liczba,
+        Err(_) => {
+            println!("Błąd: Podana cena nie jest poprawną liczbą! Przerywam dodawanie.");
+            return;
+        }
+    };
+
 
     let nowy_towar = Towar {
         nazwa: kolor_gotowa,
         marka: marka_gotowa,
         rozmiar: rozmiar_gotowy,
         stan: stan_gotowy,
+        cena_zakupu: cena_zakupu_gotowa,
+        cena_sprzedazy: cena_sprzedazy_gotowa,
         id: *aktualne_id,
     };
 
