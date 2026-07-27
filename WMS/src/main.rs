@@ -47,36 +47,7 @@ fn main() {
                     wyszukaj_towar(&magazyn);
                 }
             3 => {
-                    if magazyn.is_empty() {
-                        println!("Magazyn jest obecnie pusty");
-                    } else {
-                        println!("--- Lista Towarów ---");
-                        for przedmiot in &magazyn {
-                            println!("ID [{}] | {} (Rozmiar: {}, Stan: {:?})", przedmiot.id, przedmiot.nazwa, przedmiot.rozmiar, przedmiot.stan);
-                        }
-                        print!("Podaj ID które chcesz usunąć: ");
-                                io::stdout().flush().expect("Błąd");
-                                let mut wpisane_id = String::new();
-                                io::stdin().read_line(&mut wpisane_id).expect("Błąd");
-                                // Zamieniamy na i32
-                                let gotowe_id: i32 = wpisane_id.trim().parse().expect("To nie jest liczba!");
-
-                                // Szukamy pozycji przedmiotu o podanym id
-                                let pozycja = magazyn.iter().position(|p| p.id == gotowe_id);
-
-                                // Sprawdzamy wynik i usuwamy
-                                match pozycja {
-                                    Some(indeks ) => {
-                                        magazyn.remove(indeks);
-                                        println!("Sukces: Towar od ID {} został usunięty.", gotowe_id);                                        
-                                    } 
-                                    None => {
-                                        println!("Błąd: Nie mamy w magazynie towaru o ID {}.", gotowe_id);
-                                    }
-                                    
-                                }
-
-                    }
+                   usun_towar(&mut magazyn); 
                 }
                 0 => {
                     println!("Zamykanie programu. Do zobaczenia!");
@@ -266,4 +237,37 @@ fn wyszukaj_towar(magazyn: &Vec<Towar>) {
                             }
                         }
                     }
+}
+
+fn usun_towar(magazyn: &mut Vec<Towar>) {
+    if magazyn.is_empty() {
+                        println!("Magazyn jest obecnie pusty");
+                    } else {
+                        println!("--- Lista Towarów ---");
+                        for przedmiot in magazyn.iter() {
+                            println!("ID [{}] | {} (Rozmiar: {}, Stan: {:?})", przedmiot.id, przedmiot.nazwa, przedmiot.rozmiar, przedmiot.stan);
+                        }
+                        print!("Podaj ID które chcesz usunąć: ");
+                                io::stdout().flush().expect("Błąd");
+                                let mut wpisane_id = String::new();
+                                io::stdin().read_line(&mut wpisane_id).expect("Błąd");
+                                // Zamieniamy na i32
+                                let gotowe_id: i32 = wpisane_id.trim().parse().expect("To nie jest liczba!");
+
+                                // Szukamy pozycji przedmiotu o podanym id
+                                let pozycja = magazyn.iter().position(|p| p.id == gotowe_id);
+
+                                // Sprawdzamy wynik i usuwamy
+                                match pozycja {
+                                    Some(indeks ) => {
+                                        magazyn.remove(indeks);
+                                        println!("Sukces: Towar od ID {} został usunięty.", gotowe_id);                                        
+                                    } 
+                                    None => {
+                                        println!("Błąd: Nie mamy w magazynie towaru o ID {}.", gotowe_id);
+            }
+                                    
+        }
+
+    }
 }
