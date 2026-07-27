@@ -271,8 +271,13 @@ pub fn usun_towar(magazyn: &mut Vec<Towar>) {
         // Sprawdzamy wynik i usuwamy
         match pozycja {
             Some(indeks) => {
-                magazyn.remove(indeks);
-                println!("Sukces: Towar od ID {} został usunięty.", gotowe_id);
+                let sprzedany_towar = magazyn.remove(indeks);
+                let zysk = sprzedany_towar.cena_sprzedazy -sprzedany_towar.cena_zakupu;
+                println!("=========================================");
+                println!("Sukces: Towar ID {}, {} został wydany z magazynu", sprzedany_towar.id, sprzedany_towar.marka);
+                println!("Kupiono za: {:.2}zł | Sprzedano za: {:.2}zł", sprzedany_towar.cena_zakupu, sprzedany_towar.cena_sprzedazy);
+                println!("Wygenerowano zysk: {:.2}zł", zysk);
+                println!("=========================================");
             }
             None => {
                 println!("Błąd: Nie mamy w magazynie towaru o ID {}.", gotowe_id);
