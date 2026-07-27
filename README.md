@@ -13,6 +13,7 @@ Prosty, ale wydajny system WMS (Warehouse Management System) uruchamiany w konso
 *   **Zapis i Odczyt (JSON):** Aplikacja automatycznie wczytuje i zapisuje cały stan magazynowy do pliku `baza_towaru.json`, chroniąc dane przed utratą po zamknięciu programu.
 *   **Inteligentne ID:** System analizuje najwyższe użyte ID przy starcie programu, zapobiegając duplikatom po usunięciu części asortymentu.
 *   **Modularna Architektura:** Rozdzielenie logiki biznesowej od głównej pętli interfejsu, co zapewnia wysoką czytelność i łatwość w dodawaniu nowych modułów.
+*   **Kuloodporna obsługa wejścia:** Program jest w pełni zabezpieczony przed "paniką" i wyłączeniem w przypadku wprowadzenia przez użytkownika błędnego formatu danych (np. liter zamiast cyfr).
 
 ---
 
@@ -28,5 +29,4 @@ Aplikacja wykorzystuje bibliotekę `serde` do serializacji i deserializacji dany
 
 ## 📅 Plany na przyszły rozwój (To Do)
 
-1.  **Kuloodporna obsługa błędów:** Wyeliminowanie użycia `expect()` przy parsowaniu danych liczbowych na rzecz bezpiecznej obsługi błędów za pomocą wyrażeń `match`, aby program nie zamykał się przy literówkach użytkownika.
-2.  **Moduł Finansowy (Marża):** Rozbudowa struktury o cenę zakupu oraz sprzedaży w celu automatycznego wyliczania zysku z usuniętych (sprzedanych) produktów.
+1.  **Moduł Finansowy (Marża):** Rozbudowa struktury o cenę zakupu oraz sprzedaży w celu automatycznego wyliczania zysku z usuniętych (sprzedanych) produktów.
