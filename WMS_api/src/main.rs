@@ -1,11 +1,23 @@
 mod towar;
-use axum::{routing::get, Router, extract::State, Json};
+use serde::Deserialize;
+use axum::{routing::{get, post}, Router, extract::State, Json};
 use towar::Towar;
 use std::sync::{Arc, Mutex};
 
 struct AppState { 
     magazyn: Vec<Towar>,
     aktualne_id: i32,
+}
+
+#[derive(Deserialize)]
+struct NowyTowar {
+    nazwa: String,
+    marka: String,
+    kolor: String,
+    rozmiar: i32,
+    stan: towar::StanTowaru,
+    cena_zakupu: f32,
+    cena_sprzedazy: f32,
 }
 
 #[tokio::main]
@@ -38,4 +50,15 @@ async fn pobierz_magazyn(State(stan): State<Arc<Mutex<AppState>>>) -> Json<Vec<T
     let kopia_magazynu = sejf.magazyn.clone();
     // Pakujemy sklonowane dane do Json i zwracamy
     Json(kopia_magazynu)
+}
+
+async fn dodaj_towar(
+    State(stan): State<Arc<Mutex<AppState>>>,
+    Json(dane_z_sieci): Json<NowyTowar>,
+) -> String {
+    let mut sejf = stan.lock().unwrap();
+    let nowy_towar = Towar { } 
+    let id = sejf.aktualne_id;
+
+    format!("Sukces! Dodano towar o ID: {}", id);
 }
