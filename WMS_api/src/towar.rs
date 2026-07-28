@@ -1,3 +1,14 @@
+use serde::{Serialize, Deserialize}; // Ten plik też musi wiedzieć, co to Serialize
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
+pub enum StanTowaru {  
+    A,
+    B,
+    C,
+    D,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Towar {     
     pub nazwa: String, 
     pub marka: String,
@@ -8,3 +19,4 @@ pub struct Towar {
     pub cena_zakupu: f32,
     pub cena_sprzedazy: f32,
 }
+
