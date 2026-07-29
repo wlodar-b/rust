@@ -34,6 +34,7 @@ async fn main() {
         .route("/magazyn", get(pobierz_magazyn))
         .route("/dodaj", post(dodaj_towar))
         .route("/usun/{id}", delete(usun_towar))
+        .route("/magazyn/{id}", get(pobierz_towar))
         .with_state(stan_aplikacji); // podpinamy stan aplikacji do routera
 
     // Konfigurujemy port na którym serwer będzie nasłuchiwał
@@ -45,17 +46,16 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
-async fn pobierz_magazyn(State(stan): State<Arc<Mutex<AppState>>>) -> Json<Vec<Towar>> {
-    // Otwieramy sejf
+async fn pobierz_magazyn(
+    State(stan): State<Arc<Mutex<AppState>>>,
+) -> Json<Vec<Towar>> {
     let sejf = stan.lock().unwrap();
-    // Klonujemy zawartość wektora z magazynem
     let kopia_magazynu = sejf.magazyn.clone();
-    // Pakujemy sklonowane dane do Json i zwracamy
     Json(kopia_magazynu)
 }
 
 async fn dodaj_towar(
-    State(stan): State<Arc<Mutex<AppState>>>,
+    State(stan): State<Arc<Mutex<AppState>>>, // State WRAZ z Json działa najlepiej na 1. miejscu
     Json(dane_z_sieci): Json<NowyTowar>,
 ) -> String {
     let mut sejf = stan.lock().unwrap();
@@ -83,7 +83,21 @@ async fn usun_towar(
     sejf.magazyn.retain(|towar| towar.id != id_do_usuniecia);
     if l_przed > sejf.magazyn.len() {
         format!("Sukces! Przedmiot o id:{} został usunięty", id_do_usuniecia)
-    } else  {
+    } else {
         format!("Towar o takim id:{} nie istnieje", id_do_usuniecia)
+    }
+}
+
+// Zamiast Option<Json<Towar>> zwracamy Result, co w Axumie 0.8+
+// rozwiązuje problem z traitem Handler dla ścieżek z parametrami {id}:
+async fn pobierz_towar(
+    State(stan): State<Arc<Mutex<AppState>>>,
+    Path(szukane_id): Path<i32>,
+) -> Result<Json<Towar>, String> {
+    let sejf = stan.lock().unwrap();
+    let znaleziony = sejf.magazyn.iter().find(|towar| towar.id == szukane_id);
+    match znaleziony {
+        Some(towar) => Ok(Json(towar.clone())),
+        None => Err(format!("Towar o id:{} nie istnieje", szukane_id)),
     }
 }
