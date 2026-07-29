@@ -32,6 +32,7 @@ async fn main() {
     let app = Router::new()
         .route("/", get(|| async { "Witaj w WMS 2.0 (REST API)!"}))
         .route("/magazyn", get(pobierz_magazyn))
+        .route("/dodaj", post(dodaj_towar))
         .with_state(stan_aplikacji); // podpinamy stan aplikacji do routera
 
     // Konfigurujemy port na którym serwer będzie nasłuchiwał
@@ -57,8 +58,17 @@ async fn dodaj_towar(
     Json(dane_z_sieci): Json<NowyTowar>,
 ) -> String {
     let mut sejf = stan.lock().unwrap();
-    let nowy_towar = Towar { } 
-    let id = sejf.aktualne_id;
-
-    format!("Sukces! Dodano towar o ID: {}", id);
+    let nowy_towar = Towar { 
+        nazwa: dane_z_sieci.nazwa,
+        marka: dane_z_sieci.marka,
+        kolor: dane_z_sieci.kolor,
+        rozmiar: dane_z_sieci.rozmiar,
+        stan: dane_z_sieci.stan,
+        id: sejf.aktualne_id,
+        cena_zakupu: dane_z_sieci.cena_zakupu,
+        cena_sprzedazy: dane_z_sieci.cena_sprzedazy,
+    };
+    sejf.magazyn.push(nowy_towar);
+    sejf.aktualne_id += 1; 
+    format!("Sukces! Dodano towar o ID: {}", sejf.aktualne_id - 1)
 }
