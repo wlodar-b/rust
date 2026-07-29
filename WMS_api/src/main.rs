@@ -101,3 +101,4 @@ async fn pobierz_towar(
         None => Err(format!("Towar o id:{} nie istnieje", szukane_id)),
     }
 }
+
