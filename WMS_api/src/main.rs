@@ -1,6 +1,6 @@
 mod towar;
 use serde::Deserialize;
-use axum::{routing::{get, post}, Router, extract::State, Json};
+use axum::{routing::{get, post, delete}, Router, extract::{State, Path}, Json};
 use towar::Towar;
 use std::sync::{Arc, Mutex};
 
@@ -33,6 +33,7 @@ async fn main() {
         .route("/", get(|| async { "Witaj w WMS 2.0 (REST API)!"}))
         .route("/magazyn", get(pobierz_magazyn))
         .route("/dodaj", post(dodaj_towar))
+        .route("/usun/{id}", delete(usun_towar))
         .with_state(stan_aplikacji); // podpinamy stan aplikacji do routera
 
     // Konfigurujemy port na którym serwer będzie nasłuchiwał
@@ -71,4 +72,18 @@ async fn dodaj_towar(
     sejf.magazyn.push(nowy_towar);
     sejf.aktualne_id += 1; 
     format!("Sukces! Dodano towar o ID: {}", sejf.aktualne_id - 1)
+}
+
+async fn usun_towar(
+    State(stan): State<Arc<Mutex<AppState>>>,
+    Path(id_do_usuniecia): Path<i32>,
+) -> String {
+    let mut sejf = stan.lock().unwrap();
+    let l_przed = sejf.magazyn.len();
+    sejf.magazyn.retain(|towar| towar.id != id_do_usuniecia);
+    if l_przed > sejf.magazyn.len() {
+        format!("Sukces! Przedmiot o id:{} został usunięty", id_do_usuniecia)
+    } else  {
+        format!("Towar o takim id:{} nie istnieje", id_do_usuniecia)
+    }
 }
