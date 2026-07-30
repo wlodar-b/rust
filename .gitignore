@@ -1,3 +1,10 @@
 WMS/target/
 WMS/baza_towaru.json
 WMS_api/target/
+# Zmienne środowiskowe i sekrety
+.env
+
+# Baza danych SQLite i jej pliki tymczasowe
+*.db
+*.db-shm
+*.db-wal
