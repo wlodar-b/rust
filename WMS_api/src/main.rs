@@ -1,6 +1,11 @@
 mod towar;
 use serde::Deserialize;
-use axum::{routing::{get, post, delete}, Router, extract::{State, Path}, Json};
+use axum::{
+    routing::{get, post, delete, put}, 
+    Router, 
+    extract::{State, Path}, 
+    Json
+};
 use towar::Towar;
 use std::sync::{Arc, Mutex};
 
@@ -35,7 +40,9 @@ async fn main() {
         .route("/dodaj", post(dodaj_towar))
         .route("/usun/{id}", delete(usun_towar))
         .route("/magazyn/{id}", get(pobierz_towar))
+        .route("/edytuj/{id}", put(edytuj_towar))
         .with_state(stan_aplikacji); // podpinamy stan aplikacji do routera
+        
 
     // Konfigurujemy port na którym serwer będzie nasłuchiwał
     let port = 3000;
@@ -102,3 +109,29 @@ async fn pobierz_towar(
     }
 }
 
+async fn edytuj_towar(
+    State(stan): State<Arc<Mutex<AppState>>>,
+    Path(edytowane_id): Path<i32>, 
+    Json(nowe_dane): Json<NowyTowar>,
+) -> Result<String, String> {
+    let mut sejf = stan.lock().unwrap();
+
+    let znaleziony = sejf.magazyn
+        .iter_mut()
+        .find(|towar| towar.id == edytowane_id);
+
+    match znaleziony {
+        Some(towar) => {
+            towar.nazwa = nowe_dane.nazwa;
+            towar.marka = nowe_dane.marka;
+            towar.kolor = nowe_dane.kolor;
+            towar.rozmiar = nowe_dane.rozmiar;
+            towar.stan = nowe_dane.stan;
+            towar.cena_zakupu = nowe_dane.cena_zakupu;
+            towar.cena_sprzedazy = nowe_dane.cena_sprzedazy;
+
+            Ok(format!("Sukces! Zaktualizowano towar o ID: {}", edytowane_id))
+        }
+        None => Err(format!("Towar o ID: {} nie istnieje", edytowane_id)),
+    }
+}
