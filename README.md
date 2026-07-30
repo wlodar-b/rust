@@ -1,33 +1,49 @@
-# WMS 
+# WMS – Warehouse Management System (Rust)
 
-Prosty, ale wydajny system WMS (Warehouse Management System) napisany w języku Rust. Aplikacja aktualnie ewoluuje z lokalnego narzędzia konsolowego (CLI) w stronę pełnoprawnej usługi sieciowej.
-
----
-
-## 🚀 Zrealizowane Funkcjonalności (Wersja 1.0 CLI)
-
-*   **Księgowanie towaru:** Szybkie dodawanie nowych przedmiotów do bazy z uwzględnieniem nazwy, marki oraz rozmiaru.
-*   **Bezpieczne stany (Enum):** Ścisła kontrola jakości towaru za pomocą zdefiniowanych stanów (`A`, `B`, `C`, `D`).
-*   **Moduł Finansowy:** Automatyczne wyliczanie i raportowanie marży (zysku) podczas wydawania (usuwania) towaru z magazynu na podstawie cen zakupu i sprzedaży.
-*   **Wyszukiwarka:** Wielopoziomowe menu pozwalające na filtrowanie aktualnego asortymentu.
-*   **Zapis i Odczyt (JSON):** Aplikacja automatycznie wczytuje i zapisuje cały stan magazynowy do pliku `baza_towaru.json`.
-*   **Inteligentne ID:** System analizuje najwyższe użyte ID przy starcie programu, zapobiegając duplikatom.
-*   **Kuloodporna obsługa wejścia:** Program jest w pełni zabezpieczony przed awaryjnym zamknięciem w przypadku podania błędnego formatu danych.
+Prosty, ale wydajny system WMS napisany w języku Rust. Projekt składa się z dwóch niezależnych wersji, obrazujących ewolucję aplikacji od lokalnego narzędzia konsolowego (CLI) po pełnoprawną usługę sieciową (REST API).
 
 ---
 
-## 🏗️ Aktualna Architektura
+## 📂 Struktura Projektu: WMS vs WMS_api
 
-Kod został podzielony na moduły w celu zachowania czystości logiki biznesowej:
-*   `main.rs` – Główna pętla programu i tekstowy interfejs użytkownika.
-*   `towar.rs` – Definicja struktury `Towar` (wzbogacona o ceny) oraz typu wyliczeniowego `StanTowaru`.
-*   `operacje.rs` – Centralna logika operacji magazynowych (wyszukiwanie, parsowanie, wyliczanie zysków).
+Projekt został podzielony na dwa katalogi, które różnią się architekturą, sposobem interakcji z użytkownikiem oraz zarządzaniem pamięcią:
+
+| Cecha | `WMS/` (Wersja 1.0 - CLI) | `WMS_api/` (Wersja 2.0 - REST API) |
+| :--- | :--- | :--- |
+| **Interfejs** | Interaktywne menu konsolowe (CLI) | Serwer sieciowy HTTP (JSON / REST API) |
+| **Framework** | Czysty Rust (Standard Library) | **Axum 0.8** + **Tokio** (Asynchroniczność) |
+| **Pamięć i Wątki** | Jednowątkowa obsługa w pętli głównej | Wielowątkowy stan bezpieczny (`Arc<Mutex<AppState>>`) |
+| **Trwałość danych** | Automatyczny zapis/odczyt z pliku `baza_towaru.json` | Obecnie in-memory (RAM) z planowaną migracją do bazy SQL/JSON |
+| **Obsługiwane operacje** | Pełny CRUD, raporty marży, wyszukiwarka w konsoli | Pełny standard **CRUD** przez metody HTTP (`GET`, `POST`, `PUT`, `DELETE`) |
 
 ---
 
-## 📅 Plany na przyszły rozwój (Wersja 2.0 - Sieć i Bazy Danych)
+## 💻 1. Folder `WMS/` – Lokalny System Konsolowy (CLI)
 
-1.  **Migracja na REST API (Axum):** Przebudowa architektury na asynchroniczny serwer webowy nasłuchujący żądań HTTP w tle. Zastąpienie pętli konsolowej endpointami.
-2.  **Graficzny Interfejs Użytkownika (GUI):** Stworzenie frontendowej aplikacji webowej, która połączy się z naszym serwerem, umożliwiając zarządzanie magazynem z poziomu przeglądarki internetowej.
-3.  **Relacyjna Baza Danych (SQL):** Zastąpienie lokalnego pliku JSON profesjonalną bazą danych (np. SQLite) w celu zapewnienia wyższej wydajności, bezpieczeństwa i możliwości wykonywania zaawansowanych zapytań analitycznych.
-4.  **Wdrożenie Sieciowe (Homelab):** Konteneryzacja gotowego systemu i uruchomienie go w sieci lokalnej jako usługi działającej w trybie 24/7.
+Klasyczna wersja programu uruchamiana w terminalu, idealna do pracy jednostanowiskowej:
+* **Księgowanie i wydawanie towaru:** Szybkie dodawanie przedmiotów (nazwa, marka, rozmiar, stan `A-D`) oraz ich usuwanie z wyliczeniem marży.
+* **Zapis i Odczyt (JSON):** Aplikacja automatycznie ładuje i zapisuje cały stan magazynowy do pliku `baza_towaru.json`.
+* **Inteligentne ID i Kuloodporność:** System zapobiega duplikatom identyfikatorów i nie wyłącza się przy wprowadzaniu błędnych formatów danych.
+* **Architektura:** Podział na `main.rs` (interfejs/menu), `towar.rs` (definicje modeli) oraz `operacje.rs` (logika biznesowa).
+
+---
+
+## 🌐 2. Folder `WMS_api/` – Asynchroniczny Serwer REST API (Axum)
+
+Nowoczesna odsłona systemu, umożliwiająca zarządzanie magazynem z poziomu sieci (np. przez Thunder Client, Postman lub przyszłą aplikację frontendową):
+* **Pełny standard CRUD (REST):**
+  * `POST /dodaj` – Dodawanie nowego towaru w formacie JSON.
+  * `GET /magazyn` – Pobieranie pełnej listy asortymentu.
+  * `GET /magazyn/{id}` – Wyszukiwanie konkretnego towaru po jego identyfikatorze.
+  * `PUT /edytuj/{id}` – Edycja parametrów istniejącego towaru (cena, stan techniczny itp.).
+  * `DELETE /usun/{id}` – Wydawanie (usuwanie) towaru z magazynu.
+* **Bezpieczeństwo współbieżności:** Wykorzystanie inteligentnych wskaźników i blokad (`Arc<Mutex<AppState>>`) do bezpiecznej modyfikacji danych przez wiele jednoczesnych żądań HTTP.
+
+---
+
+## 📅 Plany na dalszy rozwój (Wersja 3.0)
+
+1. **Trwałość danych w `WMS_api`:** Podpięcie zapisu stanu magazynu do pliku JSON (na wzór wersji CLI) lub integracja z prawdziwą relacyjną bazą danych (**SQLite** / **PostgreSQL**).
+2. **Refaktoryzacja API:** Rozbicie pliku `main.rs` w `WMS_api` na mniejsze, tematyczne moduły (`handlery.rs`, `router.rs`).
+3. **Graficzny Interfejs Użytkownika (Web GUI):** Stworzenie interfejsu frontendowego (np. w Next.js/TypeScript), który połączy się z naszym Rustowym backendem.
+4. **Wdrożenie Sieciowe:** Konteneryzacja gotowego serwera i uruchomienie w sieci lokalnej jako usługi działającej w trybie 24/7.
